@@ -2,6 +2,8 @@ alias Lkn.Physics.Geometry.Box
 alias Lkn.Physics.Geometry.Vector
 
 defmodule Lkn.Physics do
+  @moduledoc false
+
   defmodule Body do
     defstruct [
       :position,
