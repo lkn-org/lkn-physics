@@ -145,11 +145,19 @@ defmodule Lkn.Physics do
     }
 
     def new(w, h) do
-      %World{
+      world = %World{
         width: w,
         height: h,
         bodies: Map.new()
       }
+
+      vert_bound_box = Box.new(w, 2 * h)
+      hori_bound_box = Box.new(w, h)
+
+      world |> add(:right_bound, Body.new(Vector.new(w, -1 * h), vert_bound_box, true))
+            |> add(:top_bound, Body.new(Vector.new(0, h), hori_bound_box, true))
+            |> add(:left_bound, Body.new(Vector.new(-1 * w, -1 * h), vert_bound_box, true))
+            |> add(:bottom_bound, Body.new(Vector.new(0, -1 * h), hori_bound_box, true))
     end
 
     def add(world, key, body) do
