@@ -92,13 +92,16 @@ defmodule Lkn.Physics do
     defp direction(:left), do: :horiz
 
     def separate(b1, vec, from: b2) do
-      if b2.blocking do
-        b1 = translate(b1, vec)
-        md = minkowski_difference(b2, b1)
+      b1 = translate(b1, vec)
+      md = minkowski_difference(b2, b1)
 
-        if contains(md, Vector.new(0, 0)) do
-          # If the minwowski difference contains the nul vector, then b1 collides
-          # with b2. We therefore need to compute a vector to separate them.
+      if contains(md, Vector.new(0, 0)) do
+        # If the minwowski difference contains the nul vector, then b1 collides
+        # with b2.
+
+        if b2.blocking do
+          # b2 blocks, so we therefore need to compute a vector to separate
+          # them.
           top = md.position.y + md.box.height
           bottom = md.position.y
           left = md.position.x
@@ -120,15 +123,16 @@ defmodule Lkn.Physics do
                     |> Enum.sort_by(fn {_, v} -> abs(v) end)
 
           case choice do
-            {:vert, val} -> Vector.new(vec.x, vec.y +  val)
-            {:horiz, val} -> Vector.new(vec.x + val, vec.y)
+            {:vert, val} -> {Vector.new(vec.x, vec.y +  val), true}
+            {:horiz, val} -> {Vector.new(vec.x + val, vec.y), true}
           end
         else
-          # Otherwise, vec is fine
-          vec
+          # b2 is not blocking, so vec is fine, but we did collide
+          {vec, true}
         end
       else
-        vec
+        # Otherwise, vec is fine
+        {vec, false}
       end
     end
   end
@@ -182,9 +186,11 @@ defmodule Lkn.Physics do
       {body, bodies} = Map.pop(world.bodies, key)
       body = fetch_position(body)
 
-      Enum.reduce(bodies, vector, fn ({_, v}, vec) ->
+      Enum.reduce(bodies, {vector, []}, fn ({k, v}, {vec, col}) ->
         v = fetch_position(v)
-        Body.separate(body, vec, from: v)
+        {vec, is_colliding} = Body.separate(body, vec, from: v)
+
+        {vec, if(is_colliding, do: [k|col], else: col)}
       end)
     end
   end

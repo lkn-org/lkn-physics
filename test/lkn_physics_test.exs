@@ -23,35 +23,35 @@ defmodule LknPhysicsTest do
             |> World.add("max", max)
             |> World.add("sam", sam)
 
-    move_vec = World.move(world, "max", Vector.new(5, 2))
+    {move_vec, []} = World.move(world, "max", Vector.new(5, 2))
 
     assert move_vec.x == 5
     assert move_vec.y == 2
 
     Agent.update(a1, & Vector.add(&1, move_vec))
 
-    move_vec = World.move(world, "max", Vector.new(5, 2))
+    {move_vec, ["sam"]} = World.move(world, "max", Vector.new(5, 2))
 
     assert move_vec.x == 2
     assert move_vec.y == 2
 
     Agent.update(a1, & Vector.add(&1, move_vec))
 
-    move_vec = World.move(world, "max", Vector.new(5, 2))
+    {move_vec, ["sam"]} = World.move(world, "max", Vector.new(5, 2))
 
     assert move_vec.x == 0
     assert move_vec.y == 2
 
     Agent.update(a1, & Vector.add(&1, move_vec))
 
-    move_vec = World.move(world, "max", Vector.new(5, 2))
+    {move_vec, ["sam"]} = World.move(world, "max", Vector.new(5, 2))
 
     assert move_vec.x == 0
     assert move_vec.y == 2
 
     Agent.update(a1, & Vector.add(&1, move_vec))
 
-    move_vec = World.move(world, "max", Vector.new(5, 2))
+    {move_vec, ["sam"]} = World.move(world, "max", Vector.new(5, 2))
 
     assert move_vec.x == 0
     assert move_vec.y == 2
