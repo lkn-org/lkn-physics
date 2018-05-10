@@ -194,5 +194,12 @@ defmodule Lkn.Physics do
         {vec, if(is_colliding, do: [k|col], else: col)}
       end)
     end
+
+    def collide_with(world, body) do
+      Enum.reduce(world.bodies, [], fn ({k, v}, res) ->
+        v = fetch_position(v)
+        if(Body.collide?(v, with: body), do: [k|res], else: res)
+      end)
+    end
   end
 end
