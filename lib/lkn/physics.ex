@@ -139,23 +139,21 @@ defmodule Lkn.Physics do
 
   defmodule World do
     defstruct [
-      :width,
-      :height,
       :bodies,
     ]
 
     @type t :: %World{
-      width: non_neg_integer,
-      height: non_neg_integer,
       bodies: %{any => Body.t}
     }
 
-    def new(w, h) do
-      world = %World{
-        width: w,
-        height: h,
+    def new() do
+      %World{
         bodies: Map.new()
       }
+    end
+
+    def new(w, h) do
+      world = new()
 
       vert_bound_box = Box.new(w, 2 * h)
       hori_bound_box = Box.new(w, h)
